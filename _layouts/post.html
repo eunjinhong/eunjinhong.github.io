@@ -2,21 +2,23 @@
 layout: default
 ---
 
-<p class="back-link"><a href="{{ '/' | relative_url }}">처음으로</a></p>
+<p class="back-link"><a href="{{ '/' | relative_url }}">Back</a></p>
 
 <article class="post">
-  <header class="post-header">
-    <p class="eyebrow">Writing</p>
-    <h1>{{ page.title | escape }}</h1>
-    <p class="post-meta">
-      <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y-%m-%d" }}</time>
-      {% if page.author %}
-        <span>{{ page.author | escape }}</span>
-      {% elsif site.author %}
-        <span>{{ site.author | escape }}</span>
-      {% endif %}
-    </p>
-  </header>
+  {% unless page.hide_header %}
+    <header class="post-header">
+      <p class="eyebrow">Writing</p>
+      <h1>{{ page.title | escape }}</h1>
+      <p class="post-meta">
+        <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y-%m-%d" }}</time>
+        {% if page.author %}
+          <span>{{ page.author | escape }}</span>
+        {% elsif site.author %}
+          <span>{{ site.author | escape }}</span>
+        {% endif %}
+      </p>
+    </header>
+  {% endunless %}
 
   <div class="post-content">
     {{ content }}
