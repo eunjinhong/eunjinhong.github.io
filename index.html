@@ -3,21 +3,297 @@ layout: default
 title: home
 ---
 
-<h1 class="site-title">{{ site.title | escape }}</h1>
+<section class="home-hero">
+  <div class="hero-topline">
+    <p class="eyebrow">Personal site</p>
+  </div>
 
-{% if site.description %}
-  <p class="site-description">{{ site.description | escape }}</p>
-{% endif %}
+  <a class="instagram-link" href="https://www.instagram.com/hhong.ej/" target="_blank" rel="noopener noreferrer" aria-label="Instagram에서 eunjin hong 보기">
+    <img src="{{ '/assets/images/hong-signature.jpg' | relative_url }}" alt="hong">
+  </a>
+
+  <p class="intro-typing" aria-label="Hello. My name is Eunjin Hong. I studied visual design, and I am interested in drawing and video work. I enjoy exploring without defining any tool too narrowly. In 2023, I studied photography and video in the Netherlands." data-text="Hello. My name is Eunjin Hong. I studied visual design, and I am interested in drawing and video work. I enjoy exploring without defining any tool too narrowly. In 2023, I studied photography and video in the Netherlands."></p>
+
+  <a class="music-link" href="https://www.youtube.com/watch?v=BEcJNcLTAkw&list=RDBEcJNcLTAkw&start_radio=1&t=1942s" target="_blank" rel="noopener noreferrer" aria-label="Play music"></a>
+
+  <div class="floating-buttons">
+    <img class="floating-button floating-button-heart" data-drag-id="heart" draggable="false" src="{{ '/assets/images/button-heart-red.png' | relative_url }}" alt="">
+    <img class="floating-button floating-button-flower" data-drag-id="flower" draggable="false" src="{{ '/assets/images/button-flower-green.png' | relative_url }}" alt="">
+    <img class="floating-button floating-button-round" data-drag-id="round" draggable="false" src="{{ '/assets/images/button-round-lime.png' | relative_url }}" alt="">
+  </div>
+</section>
 
 {% if site.posts.size > 0 %}
-  <ul class="post-list">
-    {% for post in site.posts %}
-      <li>
-        <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y-%m-%d" }}</time>
-        <a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
-      </li>
-    {% endfor %}
-  </ul>
+  <section class="post-panel" aria-labelledby="latest-writing">
+    <div class="section-heading">
+      <p class="eyebrow">Latest writing</p>
+      <h2 id="latest-writing" class="visually-hidden">Notes</h2>
+    </div>
+
+    <ul class="post-list">
+      {% for post in site.posts %}
+        <li>
+          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y-%m-%d" }}</time>
+          <a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
 {% else %}
   <p>아직 글이 없습니다.</p>
 {% endif %}
+
+<script>
+  (function () {
+    var panel = document.querySelector(".post-panel");
+    if (!panel || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    var x = 0;
+    var y = 0;
+    var dx = Math.random() > 0.5 ? 0.9 : -0.9;
+    var dy = Math.random() > 0.5 ? 0.7 : -0.7;
+
+    function boundsForPanel(rect) {
+      var topMarquee = document.querySelector(".site-marquee-top");
+      var bottomMarquee = document.querySelector(".site-marquee-bottom");
+      var minY = topMarquee ? topMarquee.getBoundingClientRect().bottom : 0;
+      var bottomLimit = bottomMarquee ? bottomMarquee.getBoundingClientRect().top : window.innerHeight;
+
+      return {
+        minX: 0,
+        minY: minY,
+        maxX: Math.max(0, window.innerWidth - rect.width),
+        maxY: Math.max(minY, bottomLimit - rect.height)
+      };
+    }
+
+    function resetPosition() {
+      var rect = panel.getBoundingClientRect();
+      var bounds = boundsForPanel(rect);
+      x = bounds.minX + Math.random() * Math.max(1, bounds.maxX - bounds.minX);
+      y = bounds.minY + Math.random() * Math.max(1, bounds.maxY - bounds.minY);
+    }
+
+    function movePanel() {
+      var rect = panel.getBoundingClientRect();
+      var bounds = boundsForPanel(rect);
+
+      x += dx;
+      y += dy;
+
+      if (x <= bounds.minX || x >= bounds.maxX) {
+        dx *= -1;
+        x = Math.min(Math.max(x, bounds.minX), bounds.maxX);
+      }
+
+      if (y <= bounds.minY || y >= bounds.maxY) {
+        dy *= -1;
+        y = Math.min(Math.max(y, bounds.minY), bounds.maxY);
+      }
+
+      panel.style.transform = "translate3d(" + x + "px, " + y + "px, 0)";
+      window.requestAnimationFrame(movePanel);
+    }
+
+    resetPosition();
+    window.addEventListener("resize", resetPosition);
+    window.requestAnimationFrame(movePanel);
+  })();
+
+  (function () {
+    var intro = document.querySelector(".intro-typing");
+    if (!intro) {
+      return;
+    }
+
+    var text = intro.dataset.text || "";
+    var index = 0;
+    var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (reducedMotion) {
+      intro.textContent = text;
+      intro.classList.add("is-complete");
+      return;
+    }
+
+    function typeNextCharacter() {
+      intro.textContent = text.slice(0, index);
+      index += 1;
+
+      if (index <= text.length) {
+        window.setTimeout(typeNextCharacter, 38);
+        return;
+      }
+
+      intro.classList.add("is-complete");
+    }
+
+    window.setTimeout(typeNextCharacter, 450);
+  })();
+
+  (function () {
+    var stage = document.querySelector(".floating-buttons");
+    var buttons = Array.prototype.slice.call(document.querySelectorAll(".floating-button"));
+    var stampImages = [
+      "{{ '/assets/images/button-heart-red.png' | relative_url }}",
+      "{{ '/assets/images/button-flower-green.png' | relative_url }}",
+      "{{ '/assets/images/button-round-lime.png' | relative_url }}",
+      "{{ '/assets/images/instagram-button.png' | relative_url }}"
+    ];
+    var firstStamp = "{{ '/assets/images/instagram-button.png' | relative_url }}";
+    var stampCursor = document.createElement("img");
+    var currentStamp = "";
+    var isDragging = false;
+    if (!stage || buttons.length === 0) {
+      return;
+    }
+
+    stampCursor.className = "stamp-cursor";
+    stampCursor.alt = "";
+    stampCursor.draggable = false;
+    document.body.appendChild(stampCursor);
+
+    function storageKey(button) {
+      return "floating-button-" + button.dataset.dragId;
+    }
+
+    function randomStamp(exceptSrc) {
+      var choices = stampImages.filter(function (src) {
+        return src !== exceptSrc;
+      });
+      return choices[Math.floor(Math.random() * choices.length)];
+    }
+
+    function chooseNextStamp() {
+      currentStamp = randomStamp(currentStamp);
+      stampCursor.src = currentStamp;
+    }
+
+    function chooseFirstStamp() {
+      currentStamp = firstStamp;
+      stampCursor.src = currentStamp;
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function savePosition(button, x, y) {
+      try {
+        window.localStorage.setItem(storageKey(button), JSON.stringify({ x: x, y: y }));
+      } catch (error) {
+        return;
+      }
+    }
+
+    function applyPosition(button, x, y) {
+      var stageRect = stage.getBoundingClientRect();
+      var buttonRect = button.getBoundingClientRect();
+      var maxX = Math.max(0, stageRect.width - buttonRect.width);
+      var maxY = Math.max(0, stageRect.height - buttonRect.height);
+      button.style.left = clamp(x, 0, maxX) + "px";
+      button.style.top = clamp(y, 0, maxY) + "px";
+      button.style.right = "auto";
+      button.style.bottom = "auto";
+    }
+
+    function makeButton(src, x, y) {
+      var button = document.createElement("img");
+      button.className = "floating-button floating-button-stamped";
+      button.src = src;
+      button.alt = "";
+      button.draggable = false;
+      stage.appendChild(button);
+      var buttonRect = button.getBoundingClientRect();
+      applyPosition(button, x - buttonRect.width / 2, y - buttonRect.height / 2);
+      return button;
+    }
+
+    function prepareButton(button) {
+      var saved = null;
+      try {
+        saved = JSON.parse(window.localStorage.getItem(storageKey(button)));
+      } catch (error) {
+        saved = null;
+      }
+
+      if (saved && typeof saved.x === "number" && typeof saved.y === "number") {
+        applyPosition(button, saved.x, saved.y);
+        return;
+      }
+
+      var stageRect = stage.getBoundingClientRect();
+      var buttonRect = button.getBoundingClientRect();
+      applyPosition(button, buttonRect.left - stageRect.left, buttonRect.top - stageRect.top);
+    }
+
+    var activeButton = null;
+    var dragOffsetX = 0;
+    var dragOffsetY = 0;
+
+    function enableDrag(button) {
+      prepareButton(button);
+
+      button.addEventListener("pointerdown", function (event) {
+        var buttonRect = button.getBoundingClientRect();
+        activeButton = button;
+        dragOffsetX = event.clientX - buttonRect.left;
+        dragOffsetY = event.clientY - buttonRect.top;
+        isDragging = true;
+        button.classList.add("is-dragging");
+        event.preventDefault();
+        event.stopPropagation();
+      });
+    }
+
+    document.addEventListener("pointermove", function (event) {
+      if (!activeButton) {
+        return;
+      }
+
+      var stageRect = stage.getBoundingClientRect();
+      applyPosition(activeButton, event.clientX - stageRect.left - dragOffsetX, event.clientY - stageRect.top - dragOffsetY);
+    });
+
+    document.addEventListener("pointerup", function () {
+      if (!activeButton) {
+        return;
+      }
+
+      var stageRect = stage.getBoundingClientRect();
+      var buttonRect = activeButton.getBoundingClientRect();
+      activeButton.classList.remove("is-dragging");
+      if (activeButton.dataset.dragId) {
+        savePosition(activeButton, buttonRect.left - stageRect.left, buttonRect.top - stageRect.top);
+      }
+      activeButton = null;
+      isDragging = false;
+    });
+
+    function moveStampCursor(event) {
+      stampCursor.style.transform = "translate3d(" + event.clientX + "px, " + event.clientY + "px, 0) translate(-50%, -50%)";
+    }
+
+    function shouldStamp(event) {
+      return event.target.closest(".home-hero");
+    }
+
+    buttons.forEach(enableDrag);
+
+    chooseFirstStamp();
+    document.addEventListener("pointermove", moveStampCursor);
+
+    document.addEventListener("pointerdown", function (event) {
+      if (isDragging || event.button !== 0 || event.target.closest("a") || event.target.closest(".floating-button") || !shouldStamp(event)) {
+        return;
+      }
+
+      var stageRect = stage.getBoundingClientRect();
+      var stampedButton = makeButton(currentStamp, event.clientX - stageRect.left, event.clientY - stageRect.top);
+      enableDrag(stampedButton);
+      chooseNextStamp();
+    });
+  })();
+</script>

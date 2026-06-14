@@ -2,10 +2,11 @@
 layout: default
 ---
 
-<p><a href="{{ '/' | relative_url }}">처음으로</a></p>
+<p class="back-link"><a href="{{ '/' | relative_url }}">처음으로</a></p>
 
-<article>
-  <header>
+<article class="post">
+  <header class="post-header">
+    <p class="eyebrow">Writing</p>
     <h1>{{ page.title | escape }}</h1>
     <p class="post-meta">
       <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y-%m-%d" }}</time>
@@ -17,5 +18,7 @@ layout: default
     </p>
   </header>
 
-  {{ content }}
+  <div class="post-content">
+    {{ content }}
+  </div>
 </article>

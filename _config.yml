@@ -1,4 +1,4 @@
-title: "Space"
+title: "eunjin hong"
 description: "Play Work Design"
 author: "eunjin hong"
 url: "https://eunjinhong.github.io"
@@ -12,6 +12,7 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - README.md
+  - DESIGN.md
   - AGENTS.md
   - CLAUDE.md
   - github_pages_workshop_plan.md
