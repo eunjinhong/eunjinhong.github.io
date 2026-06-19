@@ -29,7 +29,7 @@ title: home
     <ul class="post-list">
       {% for post in site.posts %}
         <li>
-          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y-%m-%d" }}</time>
+          <time {% if post.title == "방명록" %}class="guestbook-latest-date"{% endif %} datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y-%m-%d" }}</time>
           <a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
         </li>
       {% endfor %}
@@ -96,6 +96,35 @@ title: home
     resetPosition();
     window.addEventListener("resize", resetPosition);
     window.requestAnimationFrame(movePanel);
+  })();
+
+  (function () {
+    var dateEl = document.querySelector(".guestbook-latest-date");
+    if (!dateEl) {
+      return;
+    }
+
+    try {
+      var entries = JSON.parse(window.localStorage.getItem("eunjin-guestbook-preview-v2")) || [];
+      if (!entries.length || !entries[0].created_at) {
+        return;
+      }
+
+      var latest = entries.reduce(function (current, entry) {
+        if (!entry.created_at) {
+          return current;
+        }
+        return new Date(entry.created_at) > new Date(current.created_at) ? entry : current;
+      }, entries[0]);
+      var latestDate = new Date(latest.created_at);
+      var year = latestDate.getFullYear();
+      var month = String(latestDate.getMonth() + 1).padStart(2, "0");
+      var day = String(latestDate.getDate()).padStart(2, "0");
+      dateEl.textContent = year + "-" + month + "-" + day;
+      dateEl.setAttribute("datetime", latestDate.toISOString());
+    } catch (error) {
+      return;
+    }
   })();
 
   (function () {
